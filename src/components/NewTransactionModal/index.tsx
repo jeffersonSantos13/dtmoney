@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { useTransactions } from '../../hooks/useTransactions';
 
@@ -14,46 +14,98 @@ interface NewTransactionModalPropos {
 }
 
 export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalPropos) {
-  const { createTransaction } = useTransactions();
+  const { 
+    createTransaction, 
+    updateTransaction, 
+    transaction, 
+    setTransactionInformation 
+  } = useTransactions();
 
+  const [id, setId] = useState(0);
   const [title, setTitle] = useState('');
   const [type, setType] = useState('deposit');
   const [amount, setAmount] = useState(0);
   const [category, setCategory] = useState('');
+  const [transactionUpdate, setTransactionUpdate] = useState(false);
 
-  async function handleCreateNewTransaction(event: FormEvent) {
+  console.log(transaction);
+
+  useEffect(() => {
+    if (transaction && transaction.id > 0) {
+      setId(transaction.id);
+      setTitle(transaction.title);
+      setAmount(transaction.amount);
+      setCategory(transaction.category);
+      setType(transaction.type);
+      setTransactionUpdate(true);
+    }
+  }, [transaction]);
+
+  async function handleSubmitTransaction(event: FormEvent) {
     event.preventDefault();
 
-    await createTransaction({
-      title,
-      amount,
-      category,
-      type
-    });
+    console.log(transactionUpdate)
 
+    transactionUpdate ? await handleUpdateTransaction() : await handleCreateNewTransaction();
+
+    handleOnRequestCloseModal();
+  }
+
+  function handleOnRequestCloseModal() {
     setTitle('');
     setAmount(0);
     setCategory('');
     setType('deposit');
-    onRequestClose();
+    setTransactionUpdate(false);
+
+    setTransactionInformation({
+      id: 0,
+      title: "",
+      amount: 0,
+      type: "",
+      category: ""
+    });
+
+    onRequestClose()
+  } 
+
+  async function handleCreateNewTransaction() {
+    console.log('insert')
+    await createTransaction({
+      title,
+      amount,
+      category,
+      type: type.toUpperCase()
+    });
+  }
+
+  async function handleUpdateTransaction() {
+    console.log('update')
+    await updateTransaction({
+      id,
+      title,
+      amount,
+      category,
+      type: type.toUpperCase()
+    });
   }
 
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
+      onRequestClose={handleOnRequestCloseModal}
       overlayClassName="react-modal-overlay"
       className="react-modal-content"
     > 
       <button 
         type="button" 
-        onClick={onRequestClose}
+        onClick={handleOnRequestCloseModal}
         className="react-modal-close"
       >
         <img src={closeImg} alt="Fechar modal" />
       </button>
 
-      <Container onSubmit={handleCreateNewTransaction}>
+      <Container onSubmit={handleSubmitTransaction}>
         <h2>Cadastrar transação</h2>
 
         <input type="text" 

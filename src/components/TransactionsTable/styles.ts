@@ -36,3 +36,16 @@ export const Container = styled.div`
     }
   }
 `;
+
+export const ButtonAction = styled.td`
+  svg {
+    margin-right: 1rem;
+    cursor: pointer;
+
+    transition: filter 0.2s;
+
+    &:hover {
+      filter: brightness(0.5);
+    }
+  }
+`;

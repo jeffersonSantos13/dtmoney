@@ -26,7 +26,9 @@ export function App() {
         onOpenNewTransactionModal={handleOpenNewTransactionModal}
       />
 
-      <Dashboard />
+      <Dashboard 
+        onOpenNewTransactionModal={handleOpenNewTransactionModal}
+      />
 
       <NewTransactionModal 
         isOpen={isNewTransactionModalOpen}

@@ -1,9 +1,30 @@
+import { FaPen, FaTrash } from "react-icons/fa";
+
 import { useTransactions } from "../../hooks/useTransactions";
-import { Container } from "./styles";
+import { Container, ButtonAction } from "./styles";
 
-export function TransactionsTable() {
-  const { transactions } = useTransactions();
+interface HeaderPropos {
+  onOpenNewTransactionModal: () => void;
+}
 
+interface Transaction {
+  id: number;
+  title: string;
+  amount: number;
+  type: string;
+  category: string;
+  createdAt: string;
+}
+
+export function TransactionsTable({ onOpenNewTransactionModal }: HeaderPropos) {
+  const { transactions, setTransactionInformation } = useTransactions();
+  const { pageInfo } = useTransactions();
+
+  function handleUpdateTransaction(input: Transaction) {
+    setTransactionInformation(input);
+    onOpenNewTransactionModal();
+  }  
+  
   return (
     <Container>
       <table>
@@ -13,6 +34,7 @@ export function TransactionsTable() {
             <th>Valor</th>
             <th>Categoria</th>
             <th>Data</th>
+            <th>Ação</th>
           </tr>
         </thead>
 
@@ -31,6 +53,10 @@ export function TransactionsTable() {
               <td>
                 {new Intl.DateTimeFormat('pt-BR').format(new Date())}
               </td>
+              <ButtonAction>
+                <FaPen size={20} color="#41414d" onClick={() => handleUpdateTransaction(transaction)} />
+                <FaTrash size={20} color="#E02041"/>
+              </ButtonAction>
             </tr>
           ))}
         </tbody>

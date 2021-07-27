@@ -3,11 +3,17 @@ import { TransactionsTable } from "../TransactionsTable";
 
 import { Container } from "./styles";
 
-export function Dashboard() {
+interface HeaderPropos {
+  onOpenNewTransactionModal: () => void;
+}
+
+export function Dashboard({ onOpenNewTransactionModal }: HeaderPropos) {
   return (
     <Container>
       <Summary />
-      <TransactionsTable />
+      <TransactionsTable 
+        onOpenNewTransactionModal={onOpenNewTransactionModal}
+      />
     </Container>
   );
 }
