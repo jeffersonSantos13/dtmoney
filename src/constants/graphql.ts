@@ -31,3 +31,24 @@ export const MUTATION_CREATE_TRANSACTION = `
     }
   }
 `;
+
+export const MUTATION_UPDATE_TRANSACTION = `
+  mutation($input: TransactionInput) {
+    updateTransaction(input: $input) {
+      id
+      title
+      type
+      amount
+      category
+    }
+  }
+`;
+
+export const MUTATION_DELETE_TRANSACTION = `
+  mutation($id: ID!) {
+    deleteTransaction(id: $id)
+  }
+`;
+
+
+

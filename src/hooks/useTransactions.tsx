@@ -1,7 +1,13 @@
 import { createContext, useEffect, useState, useContext, ReactNode } from 'react';
-import { api } from '../services/api';
-import { GRAPHQL_API, LIST_ALL_TRANSACTIONS, MUTATION_CREATE_TRANSACTION } from '../constants/graphql';
 import axios from 'axios';
+
+import { 
+  GRAPHQL_API, 
+  LIST_ALL_TRANSACTIONS, 
+  MUTATION_CREATE_TRANSACTION,
+  MUTATION_UPDATE_TRANSACTION,
+  MUTATION_DELETE_TRANSACTION
+} from '../constants/graphql';
 
 interface Transaction {
   id: number;
@@ -35,6 +41,8 @@ interface TransactionsContextData {
   pageInfo: PageInfo;
   createTransaction: (Transaction: TransactionInput) => Promise<void>;
   updateTransaction: (Transaction: TransactionInputUpdate) => Promise<void>;
+  deleteTransaction: (id: Number) => Promise<void>;
+  findAllTransactions: () => void;
   setTransactionInformation: (Transaction: TransactionInputUpdate) => void;
 }
 
@@ -59,9 +67,22 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
       setPageInfo(response.data.data.listAllTransactions.pageInfo);
     });
   }, []);
+
+  async function findAllTransactions() {
+    axios.post(GRAPHQL_API,{
+      query: LIST_ALL_TRANSACTIONS,
+      variables: { 
+        page: 0 
+      }
+    })
+    .then(response => { 
+      setTransactions(response.data.data.listAllTransactions.transactionResponse);
+      setPageInfo(response.data.data.listAllTransactions.pageInfo);
+    });
+  }
   
   async function createTransaction(input: TransactionInput) {
-    const response = await api.post('', {
+    const response = await axios.post(GRAPHQL_API, {
       query: MUTATION_CREATE_TRANSACTION,
       variables: {
         input
@@ -75,9 +96,38 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
   }
 
   async function updateTransaction(input: TransactionInputUpdate) {
-    console.log("Input", input);
+    const response = await axios.post(GRAPHQL_API, {
+      query: MUTATION_UPDATE_TRANSACTION,
+      variables: {
+        input
+      },
+    });
 
-    console.log("Transaction", transaction);
+    if (response.data) {
+      const updateTransactionInput = response.data.data.updateTransaction;
+      
+      const transactionsIndex = transactions.findIndex(
+        transactionItem => transactionItem.id === updateTransactionInput.id);
+
+      transactions[transactionsIndex] = updateTransactionInput;
+
+      setTransactions([...transactions]);
+    }
+  }
+
+  async function deleteTransaction(id: Number) {
+    try {
+      await axios.post(GRAPHQL_API, {
+        query: MUTATION_DELETE_TRANSACTION,
+        variables: {
+          id
+        },
+      });
+
+      setTransactions(transactions.filter(transaction => transaction.id !== id));
+    } catch(err) {
+      alert('Erro ao deletar caso, tente novamente.');
+    }
   }
 
   function setTransactionInformation(input: TransactionInputUpdate) {
@@ -94,7 +144,9 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
         pageInfo, 
         createTransaction,
         updateTransaction,
-        setTransactionInformation
+        deleteTransaction,
+        setTransactionInformation,
+        findAllTransactions
       }
     }>
       {children}

@@ -28,8 +28,6 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
   const [category, setCategory] = useState('');
   const [transactionUpdate, setTransactionUpdate] = useState(false);
 
-  console.log(transaction);
-
   useEffect(() => {
     if (transaction && transaction.id > 0) {
       setId(transaction.id);
@@ -43,8 +41,6 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
 
   async function handleSubmitTransaction(event: FormEvent) {
     event.preventDefault();
-
-    console.log(transactionUpdate)
 
     transactionUpdate ? await handleUpdateTransaction() : await handleCreateNewTransaction();
 
@@ -70,7 +66,6 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
   } 
 
   async function handleCreateNewTransaction() {
-    console.log('insert')
     await createTransaction({
       title,
       amount,
@@ -80,7 +75,6 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
   }
 
   async function handleUpdateTransaction() {
-    console.log('update')
     await updateTransaction({
       id,
       title,
@@ -106,7 +100,7 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
       </button>
 
       <Container onSubmit={handleSubmitTransaction}>
-        <h2>Cadastrar transação</h2>
+        <h2>{transactionUpdate ? "Atualizar" : "Cadastrar"} transação</h2>
 
         <input type="text" 
           placeholder="Título"
@@ -150,7 +144,7 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
         />
 
         <button type="submit">
-          Cadastrar
+          {transactionUpdate ? "Atualizar" : "Cadastrar"}
         </button>
       </Container>
     </Modal>
