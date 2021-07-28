@@ -1,4 +1,5 @@
-export const GRAPHQL_API = "http://localhost:9320/graphql";
+//export const GRAPHQL_API = "http://localhost:9320/graphql";
+export const GRAPHQL_API =  "https://api-graphql-transaction.herokuapp.com/graphql";
 
 export let LIST_ALL_TRANSACTIONS = `
   query Transactions($page: Int){
