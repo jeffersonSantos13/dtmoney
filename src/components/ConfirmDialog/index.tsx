@@ -9,7 +9,6 @@ import { Container, Button } from './styles';
 
 interface ConfirmDialogPropos {
   confirmDialog: ConfirmDialogInput;
-  onConfirmDialogModal: () => void;
   onCancelDialogModal: () => void;
 }
 
@@ -19,7 +18,7 @@ interface ConfirmDialogInput {
   subTitle: string;
 }
 
-export function ConfirmDialog({ confirmDialog, onConfirmDialogModal, onCancelDialogModal }: ConfirmDialogPropos)  {
+export function ConfirmDialog({ confirmDialog, onCancelDialogModal }: ConfirmDialogPropos)  {
   const { 
     transaction, 
     deleteTransaction, 
@@ -34,9 +33,6 @@ export function ConfirmDialog({ confirmDialog, onConfirmDialogModal, onCancelDia
 
     handleonCancelDialogModal();
     findAllTransactions();
-    
-    alert("Registro deletado com sucesso!")
-    // TODO: Adicionar o Toast
   }
 
   function handleonCancelDialogModal() {

@@ -1,6 +1,8 @@
 import { createContext, useEffect, useState, useContext, ReactNode } from 'react';
 import axios from 'axios';
 
+import { toast } from 'react-toastify';
+
 import { 
   GRAPHQL_API, 
   LIST_ALL_TRANSACTIONS, 
@@ -82,36 +84,48 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
   }
   
   async function createTransaction(input: TransactionInput) {
-    const response = await axios.post(GRAPHQL_API, {
-      query: MUTATION_CREATE_TRANSACTION,
-      variables: {
-        input
-      },
-    });
+    try {
+      const response = await axios.post(GRAPHQL_API, {
+        query: MUTATION_CREATE_TRANSACTION,
+        variables: {
+          input
+        },
+      });
+  
+      setTransactions([
+        ...transactions,
+        response.data.data.createTransaction
+      ]);
 
-    setTransactions([
-      ...transactions,
-      response.data.data.createTransaction
-    ]);
+      toast.success("Registro criado com sucesso!");
+    }  catch(err) {
+      toast.error("Erro ao criar o registro, tente novamente.");
+    }
   }
 
   async function updateTransaction(input: TransactionInputUpdate) {
-    const response = await axios.post(GRAPHQL_API, {
-      query: MUTATION_UPDATE_TRANSACTION,
-      variables: {
-        input
-      },
-    });
+    try {
+      const response = await axios.post(GRAPHQL_API, {
+        query: MUTATION_UPDATE_TRANSACTION,
+        variables: {
+          input
+        },
+      });
+  
+      if (response.data) {
+        const updateTransactionInput = response.data.data.updateTransaction;
+        
+        const transactionsIndex = transactions.findIndex(
+          transactionItem => transactionItem.id === updateTransactionInput.id);
+  
+        transactions[transactionsIndex] = updateTransactionInput;
+  
+        setTransactions([...transactions]);
 
-    if (response.data) {
-      const updateTransactionInput = response.data.data.updateTransaction;
-      
-      const transactionsIndex = transactions.findIndex(
-        transactionItem => transactionItem.id === updateTransactionInput.id);
-
-      transactions[transactionsIndex] = updateTransactionInput;
-
-      setTransactions([...transactions]);
+        toast.success("Registro atualizado com sucesso!");
+      }
+    } catch(err) {
+      toast.error("Erro ao atualizar o registro, tente novamente.");
     }
   }
 
@@ -125,8 +139,10 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
       });
 
       setTransactions(transactions.filter(transaction => transaction.id !== id));
+
+      toast.success("Registro deletado com sucesso!");
     } catch(err) {
-      alert('Erro ao deletar caso, tente novamente.');
+      toast.error("Erro ao deletar, tente novamente.");
     }
   }
 

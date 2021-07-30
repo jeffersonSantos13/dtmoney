@@ -3,13 +3,12 @@ import { FaPen, FaTrash } from "react-icons/fa";
 import { useTransactions } from "../../hooks/useTransactions";
 import { Container, ButtonAction } from "./styles";
 
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 interface HeaderPropos {
   onOpenNewTransactionModal: () => void;
   onConfirmDialogModal: () => void;
-  onCancelDialogModal: () => void;
 }
 
 interface Transaction {
@@ -23,8 +22,7 @@ interface Transaction {
 
 export function TransactionsTable({ 
   onOpenNewTransactionModal, 
-  onConfirmDialogModal,
-  onCancelDialogModal
+  onConfirmDialogModal
 }: HeaderPropos) {
   const { transactions, setTransactionInformation } = useTransactions();
 
@@ -33,26 +31,15 @@ export function TransactionsTable({
     onOpenNewTransactionModal();
   }
 
-  const notify = () => toast("Wow so easy!");
-
   async function handleDeleteTransaction(input: Transaction) {
     setTransactionInformation(input);
 
     onConfirmDialogModal();
-
-    /* toast.success('Registro deletado com sucesso!', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: true,
-      progress: undefined,
-    }); */
   }
   
   return (
     <>
+      <ToastContainer />
       <Container>
         <table>
           <thead>
@@ -93,7 +80,6 @@ export function TransactionsTable({
           </tbody>
         </table>      
       </Container>
-      <ToastContainer />
     </>
   );
 }

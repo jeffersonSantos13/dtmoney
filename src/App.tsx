@@ -39,7 +39,6 @@ export function App() {
       <Dashboard 
         onOpenNewTransactionModal={handleOpenNewTransactionModal}
         onConfirmDialogModal={handleConfirmDialogModal}
-        onCancelDialogModal={handleCancelDialogModal}
       />
 
       <NewTransactionModal 
@@ -49,7 +48,6 @@ export function App() {
 
       <ConfirmDialog 
         confirmDialog={confirmDialog}
-        onConfirmDialogModal={handleConfirmDialogModal}
         onCancelDialogModal={handleCancelDialogModal}
       />
 
